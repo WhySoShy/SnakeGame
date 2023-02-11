@@ -5,11 +5,53 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SnakeGame"
         mc:Ignorable="d"
-        ContentRendered="Window_RenderedContent"
-        Title="Snake game" SizeToContent="WidthAndHeight">
-    <Border BorderBrush="Black" BorderThickness="5">
-        <Canvas Name="GameArea" ClipToBounds="True" Width="400" Height="400">
-            
+        ContentRendered="Window_RenderedContent" KeyUp="Window_KeyUp" 
+        WindowState="Maximized" WindowStyle="None" SnapsToDevicePixels="True"
+        Title="Snake game">
+    <Window.Resources>
+        <Style x:Key="Label" TargetType="Label">
+            <Setter Property="FontSize" Value="20" />
+        </Style>
+    </Window.Resources>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="120"/>
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <StackPanel Name="Layout" Grid.RowSpan="1" Grid.ColumnSpan="1" Height="120" Background="Red" Orientation="Vertical">
+            <Button
+                Margin="0,30,0,0"
+                Height="64" Width="320" 
+                Cursor="Hand" 
+                Background="LightGray" 
+                FontSize="32"
+                BorderThickness="0"
+                Click="Button_Click"
+                Content="Main menu"/>
+        </StackPanel>
+        <Canvas 
+            Grid.Row="2"
+            Grid.Column="0"
+            Name="GameArea" 
+            ClipToBounds="True" 
+            Height="510" Width="510"
+            Background="Green" 
+            VerticalAlignment="Stretch">
         </Canvas>
-    </Border>
+        <StackPanel 
+            Grid.Row="3"
+            Background="Orange"
+            HorizontalAlignment="Left"
+            Width="200">
+            <Label Name="Difficulty_Label" Style="{StaticResource Label}" Content="Difficulty:" />
+            <Label Name="Score_Label" Style="{StaticResource Label}" Content="Score: " />
+            <Label Name="Speed_Label" Style="{StaticResource Label}" Content="Speed: " />
+        </StackPanel>
+    </Grid>
+
+
+
 </Window>

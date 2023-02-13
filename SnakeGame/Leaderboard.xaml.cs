@@ -37,8 +37,8 @@ namespace SnakeGame
 
         private void ReadFromJson()
         {
-            //List<LeaderboardList> leaderboards = new List<LeaderboardList>();
-            var JsonString = File.ReadAllText(@"C:\Users\emilk\Source\Repos\SnakeGame\SnakeGame\Data.json");
+            string path = @"C:\Users\emilk\source\repos\SnakeGame\Data\Data.json";
+            var JsonString = File.ReadAllText(path); 
             List<LeaderboardList> leaderboards = JsonSerializer.Deserialize<List<LeaderboardList>>(JsonString);
 
             if (leaderboards.Count() <= 0)

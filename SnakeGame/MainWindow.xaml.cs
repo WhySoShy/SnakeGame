@@ -84,11 +84,13 @@ namespace SnakeGame
             switch(e.Key)
             {
                 case Key.Escape:
+
                     PauseScreen.Visibility = Visibility.Visible;
                     if (gameState != GameState.Dead)
                         gameState = GameState.Paused; 
                     return;
                 case Key.Space:
+
                     if (gameState != GameState.Dead)
                         gameState = GameState.Started;
                     return;
@@ -286,12 +288,14 @@ namespace SnakeGame
         }
         private void EndGame()
         {
+            string path = @"C:\Users\emilk\source\repos\SnakeGame\Data\Data.json";
             gameState = GameState.Dead;
             timer.IsEnabled = false;
             List<LeaderboardList> list = ReadFromJson();
+            DeadScreen.Visibility = Visibility.Visible;
             if (list.Count() >= 10)
             {
-                List<LeaderboardList> _ = list; //.FindAll(x => x.Score > currentScore)
+                List<LeaderboardList> _ = list;
                 _.Add(new LeaderboardList() { Score = currentScore, Name = Username.Text });
 
                 _.Sort((x,y) => x.Score.CompareTo(y.Score));
@@ -300,14 +304,14 @@ namespace SnakeGame
                 if (_.Count > 10)
                     _.RemoveAt(_.Count() - 1);
 
-                File.WriteAllText(@"C:\Users\emilk\Source\Repos\SnakeGame\SnakeGame\Data.json", JsonSerializer.Serialize(_));
+                File.WriteAllText(path, JsonSerializer.Serialize(_));
                 return;
             }
 
             if (list.Count() <= 0 || list.Count() <= 10)
             {
                 list.Add(new LeaderboardList() { Name = Username.Text, Score = currentScore });
-                File.WriteAllText(@"C:\Users\emilk\Source\Repos\SnakeGame\SnakeGame\Data.json", JsonSerializer.Serialize(list.OrderByDescending(x => x.Score).ToList()));
+                File.WriteAllText(path, JsonSerializer.Serialize(list.OrderByDescending(x => x.Score).ToList()));
                 return;
             }
 
@@ -324,7 +328,7 @@ namespace SnakeGame
             PauseScreen.Visibility = Visibility.Hidden;
         }
         private List<LeaderboardList> ReadFromJson()
-            => JsonSerializer.Deserialize<List<LeaderboardList>>(File.ReadAllText(@"C:\Users\emilk\Source\Repos\SnakeGame\SnakeGame\Data.json"));
+            => JsonSerializer.Deserialize<List<LeaderboardList>>(File.ReadAllText(@"C:\Users\emilk\source\repos\SnakeGame\Data\Data.json"));
 
           
         

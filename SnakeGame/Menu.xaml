@@ -31,11 +31,11 @@
                 Click="Leaderboard_Click"
                 Content="LEADERBOARD"
                 />
-            <Button 
+            <!--<Button 
                 Style="{StaticResource Button}"
                 ToolTip="Change options for your game"
                 Click="Button_Click"
-                Content="OPTIONS" />
+                Content="OPTIONS" />-->
             <Button 
                 Style="{StaticResource Button}"
                 ToolTip="Just leave it"

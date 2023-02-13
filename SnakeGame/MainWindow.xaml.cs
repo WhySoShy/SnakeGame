@@ -35,8 +35,7 @@ namespace SnakeGame
         private int snakeLength = 3;
         private int currentScore = 0;
         private GameState gameState = GameState.Paused;
-        private enum GameState { Started, Paused }
-        //private bool gameState = false;
+        private enum GameState { Started, Paused, Dead }
 
         private DispatcherTimer timer = new DispatcherTimer();
         #endregion
@@ -69,7 +68,7 @@ namespace SnakeGame
                 MoveSnake();
 
             Score_Label.Content = $"Score: {currentScore}";
-            Speed_Label.Content = $"Speed: {Math.Max(snakeSpeedThreshold, (int)timer.Interval.TotalMilliseconds - (currentScore * 2))}";
+            Speed_Label.Content = $"Speed: {Math.Max(snakeSpeedThreshold, (int)timer.Interval.TotalMilliseconds - (currentScore * 4))}";
         }
         private async void Window_RenderedContent(Object sender, EventArgs e)
         {
@@ -83,17 +82,18 @@ namespace SnakeGame
             switch(e.Key)
             {
                 case Key.Escape:
-                    /*
-                     Show mini menu where you can either continue or exit to main menu
-                     */
                     PauseScreen.Visibility = Visibility.Visible;
-                    gameState = GameState.Paused;
+                    if (gameState != GameState.Dead)
+                        gameState = GameState.Paused; 
                     return;
                 case Key.Space:
-                    gameState = GameState.Started;
+                    if (gameState != GameState.Dead)
+                        gameState = GameState.Started;
                     return;
             }
 
+            if (gameState != GameState.Started)
+                return;
             SnakeDirection _ = snakeDirection;
             switch(e.Key)
             {
@@ -183,14 +183,14 @@ namespace SnakeGame
             if (head.point.X < 0 || head.point.X >= GameArea.ActualWidth ||
                 head.point.Y < 0 || head.point.Y >= GameArea.ActualHeight)
             {
-                gameState = GameState.Paused;
+                gameState = GameState.Dead;
                 EndGame();
             }
 
             foreach (SnakePart part in snakeParts.Take(snakeParts.Count - 1))
                 if (head.point.X == part.point.X && head.point.Y == part.point.Y)
                 {
-                    gameState = GameState.Paused;
+                    gameState = GameState.Dead;
                     EndGame();
                 }
         }
@@ -259,7 +259,6 @@ namespace SnakeGame
                 }
             }
         }
-
         private Point GetNextFoodPos()
         {
             int maxX = (int)(GameArea.ActualWidth / snakeSquareSize);
@@ -286,12 +285,7 @@ namespace SnakeGame
             Canvas.SetTop(snakeFood, foodPosition.Y);
             Canvas.SetLeft(snakeFood, foodPosition.X);
         }
-        private void EndGame()
-        {
-            //Debug.WriteLine($"X: {snakeParts[0].point.X} \n Y: {snakeParts[0].point.Y}");
-            timer.IsEnabled = false;
-        }
-
+        private void EndGame() => timer.IsEnabled = false;
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             Menu menu = new();

@@ -21,25 +21,38 @@
             <Setter Property="BorderThickness" Value="0" />
         </Style>
     </Window.Resources>
-    <Grid Name="ParentGrid" Height="auto" Width="auto">
+    <Grid Name="Parent">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="auto"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="120"/>
             <RowDefinition Height="auto" />
+            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <StackPanel 
-            ClipToBounds="True"
-            HorizontalAlignment="Stretch"
-            VerticalAlignment="Stretch"
-            Background="Red"
+            Grid.RowSpan="3"
             Panel.ZIndex="10"
             Name="PauseScreen"
             Visibility="Hidden">
-            <Button Style="{StaticResource Pause}" Click="Continue_Click" VerticalAlignment="Center">CONTINUE</Button>
-            <Button Style="{StaticResource Pause}" Click="Button_Click" VerticalAlignment="Center">MAIN MENU</Button>
+            <Grid Height="{Binding ActualHeight, ElementName=PauseScreen}" 
+                  Width="{Binding ActualWidth, ElementName=PauseScreen}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Row="0" Grid.Column="0" 
+                    VerticalAlignment="Center" HorizontalAlignment="Center">
+                    <Button Style="{StaticResource Pause}" Click="Continue_Click">CONTINUE</Button>
+                    <Button Style="{StaticResource Pause}" Click="Button_Click">MAIN MENU</Button>
+                </StackPanel>
+            </Grid>
         </StackPanel>
+
+
+
         <StackPanel Name="Layout" Grid.RowSpan="1" Grid.ColumnSpan="1" Height="120" HorizontalAlignment="Center" VerticalAlignment="Bottom">
             <Label Name="Difficulty_Label" Style="{StaticResource Label}" Content="Difficulty:" />
             <Label Name="Score_Label" Style="{StaticResource Label}" Content="Score: " />

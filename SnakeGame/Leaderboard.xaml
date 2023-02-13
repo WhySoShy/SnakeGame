@@ -22,18 +22,7 @@
     <Grid>
         <StackPanel Background="Orange"  VerticalAlignment="Center" HorizontalAlignment="Center" Name="LeaderboardPanel">
             <Label Style="{StaticResource Title}">LEADERBOARD</Label>
-            <StackPanel Name="LeaderboardHolders">
-                <Label Style="{StaticResource BoardHolders}" Content="1. {User} | {Score} | {Speed} | {Difficulty}"/>
-                <Label Style="{StaticResource BoardHolders}" Content="2. {User} | {Score} | {Speed} | {Difficulty}"/>
-                <Label Style="{StaticResource BoardHolders}" Content="3. {User} | {Score} | {Speed} | {Difficulty}"/>
-                <Label Style="{StaticResource BoardHolders}" Content="4. {User} | {Score} | {Speed} | {Difficulty}"/>
-                <Label Style="{StaticResource BoardHolders}" Content="5. {User} | {Score} | {Speed} | {Difficulty}"/>
-                <Label Style="{StaticResource BoardHolders}" Content="6. {User} | {Score} | {Speed} | {Difficulty}"/>
-                <Label Style="{StaticResource BoardHolders}" Content="7. {User} | {Score} | {Speed} | {Difficulty}"/>
-                <Label Style="{StaticResource BoardHolders}" Content="8. {User} | {Score} | {Speed} | {Difficulty}"/>
-                <Label Style="{StaticResource BoardHolders}" Content="9. {User} | {Score} | {Speed} | {Difficulty}"/>
-                <Label Style="{StaticResource BoardHolders}" Content="10. {User} | {Score} | {Speed} | {Difficulty}"/>
-            </StackPanel>
+            <StackPanel Name="LeaderboardHolders"></StackPanel>
             <Button Click="Button_Click" Height="32" BorderThickness="0">RETURN</Button>
         </StackPanel>
     </Grid>

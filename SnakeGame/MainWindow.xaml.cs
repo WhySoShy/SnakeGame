@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -14,8 +16,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
-using System.Windows.Controls;
 using SnakeGame.Models;
+
 namespace SnakeGame
 {
     // TODO: Prompt de forskellige sværhedsgrader inden spillets start
@@ -181,18 +183,15 @@ namespace SnakeGame
             }
 
             if (head.point.X < 0 || head.point.X >= GameArea.ActualWidth ||
-                head.point.Y < 0 || head.point.Y >= GameArea.ActualHeight)
-            {
-                gameState = GameState.Dead;
+                head.point.Y < 0 || head.point.Y >= GameArea.ActualHeight)                
                 EndGame();
-            }
+            
 
             foreach (SnakePart part in snakeParts.Take(snakeParts.Count - 1))
                 if (head.point.X == part.point.X && head.point.Y == part.point.Y)
-                {
-                    gameState = GameState.Dead;
+                
                     EndGame();
-                }
+                
         }
         private void EatSnakeFood()
         {
@@ -285,7 +284,34 @@ namespace SnakeGame
             Canvas.SetTop(snakeFood, foodPosition.Y);
             Canvas.SetLeft(snakeFood, foodPosition.X);
         }
-        private void EndGame() => timer.IsEnabled = false;
+        private void EndGame()
+        {
+            gameState = GameState.Dead;
+            timer.IsEnabled = false;
+            List<LeaderboardList> list = ReadFromJson();
+            if (list.Count() >= 10)
+            {
+                List<LeaderboardList> _ = list; //.FindAll(x => x.Score > currentScore)
+                _.Add(new LeaderboardList() { Score = currentScore, Name = Username.Text });
+
+                _.Sort((x,y) => x.Score.CompareTo(y.Score));
+                _ = _.OrderByDescending(x => x.Score).ToList();
+
+                if (_.Count > 10)
+                    _.RemoveAt(_.Count() - 1);
+
+                File.WriteAllText(@"C:\Users\emilk\Source\Repos\SnakeGame\SnakeGame\Data.json", JsonSerializer.Serialize(_));
+                return;
+            }
+
+            if (list.Count() <= 0 || list.Count() <= 10)
+            {
+                list.Add(new LeaderboardList() { Name = Username.Text, Score = currentScore });
+                File.WriteAllText(@"C:\Users\emilk\Source\Repos\SnakeGame\SnakeGame\Data.json", JsonSerializer.Serialize(list.OrderByDescending(x => x.Score).ToList()));
+                return;
+            }
+
+        }
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             Menu menu = new();
@@ -297,5 +323,10 @@ namespace SnakeGame
             gameState = GameState.Started;
             PauseScreen.Visibility = Visibility.Hidden;
         }
+        private List<LeaderboardList> ReadFromJson()
+            => JsonSerializer.Deserialize<List<LeaderboardList>>(File.ReadAllText(@"C:\Users\emilk\Source\Repos\SnakeGame\SnakeGame\Data.json"));
+
+          
+        
     }
 }

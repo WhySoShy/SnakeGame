@@ -1,7 +1,10 @@
-﻿using System;
+﻿using SnakeGame.Models;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -22,6 +25,7 @@ namespace SnakeGame
         public Leaderboard()
         {
             InitializeComponent();
+            ReadFromJson();
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -29,6 +33,27 @@ namespace SnakeGame
             Menu menu = new();
             menu.Show();
             this.Close();
+        }
+
+        private void ReadFromJson()
+        {
+            //List<LeaderboardList> leaderboards = new List<LeaderboardList>();
+            var JsonString = File.ReadAllText(@"C:\Users\emilk\Source\Repos\SnakeGame\SnakeGame\Data.json");
+            List<LeaderboardList> leaderboards = JsonSerializer.Deserialize<List<LeaderboardList>>(JsonString);
+
+            if (leaderboards.Count() <= 0)
+            {
+                LeaderboardHolders.Children.Add(new Label() { Content = "There was not found any records.", Style = (Style)FindResource("BoardHolders") });
+                return;
+            }
+            for(int i = 0; i < leaderboards.Count(); i++)
+                LeaderboardHolders.Children.Add(new Label()
+                {
+                    Content = $"{i+1}. | {leaderboards[i].Name} | {leaderboards[i].Score}",
+                    Style = (Style)FindResource("BoardHolders")
+                });
+
+            //foreach (var item in leaderboards)
         }
     }
 }

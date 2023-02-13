@@ -18,6 +18,7 @@ using System.Windows.Controls;
 using SnakeGame.Models;
 namespace SnakeGame
 {
+    // TODO: Prompt de forskellige sværhedsgrader inden spillets start
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
@@ -28,12 +29,14 @@ namespace SnakeGame
         const int snakeRadius = 2;
 
         const int snakeStartLength = 3;
-        const int snakeStartSpeed = 150;
+        const int snakeStartSpeed = 400;
         const int snakeSpeedThreshold = 100;
 
         private int snakeLength = 3;
         private int currentScore = 0;
-        private bool gameState = true;
+        private GameState gameState = GameState.Paused;
+        private enum GameState { Started, Paused }
+        //private bool gameState = false;
 
         private DispatcherTimer timer = new DispatcherTimer();
         #endregion
@@ -62,17 +65,35 @@ namespace SnakeGame
         }
         private void Timer(Object sender, EventArgs e)
         {
-            MoveSnake();
+            if (gameState == GameState.Started)
+                MoveSnake();
+
             Score_Label.Content = $"Score: {currentScore}";
             Speed_Label.Content = $"Speed: {Math.Max(snakeSpeedThreshold, (int)timer.Interval.TotalMilliseconds - (currentScore * 2))}";
         }
-        private void Window_RenderedContent(Object sender, EventArgs e)
+        private async void Window_RenderedContent(Object sender, EventArgs e)
         {
             DrawGame();
             StartNewGame();
+            PauseScreen.Height = ActualHeight;
+            PauseScreen.Width = ActualWidth;
         }
         private void Window_KeyUp(Object sender, KeyEventArgs e)
         {
+            switch(e.Key)
+            {
+                case Key.Escape:
+                    /*
+                     Show mini menu where you can either continue or exit to main menu
+                     */
+                    PauseScreen.Visibility = Visibility.Visible;
+                    gameState = GameState.Paused;
+                    return;
+                case Key.Space:
+                    gameState = GameState.Started;
+                    return;
+            }
+
             SnakeDirection _ = snakeDirection;
             switch(e.Key)
             {
@@ -112,7 +133,7 @@ namespace SnakeGame
         }
         private void MoveSnake()
         {
-            if (!gameState)
+            if (gameState == GameState.Paused)
                 return;
 
             while(snakeParts.Count() >= snakeLength)
@@ -162,14 +183,14 @@ namespace SnakeGame
             if (head.point.X < 0 || head.point.X >= GameArea.ActualWidth ||
                 head.point.Y < 0 || head.point.Y >= GameArea.ActualHeight)
             {
-                gameState = false;
+                gameState = GameState.Paused;
                 EndGame();
             }
 
             foreach (SnakePart part in snakeParts.Take(snakeParts.Count - 1))
                 if (head.point.X == part.point.X && head.point.Y == part.point.Y)
                 {
-                    gameState = false;
+                    gameState = GameState.Paused;
                     EndGame();
                 }
         }
@@ -276,6 +297,11 @@ namespace SnakeGame
             Menu menu = new();
             menu.Show();
             this.Close();
+        }
+        private void Continue_Click(object sender, RoutedEventArgs e)
+        {
+            gameState = GameState.Started;
+            PauseScreen.Visibility = Visibility.Hidden;
         }
     }
 }

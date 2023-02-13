@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:SnakeGame"
+        xmlns:local="clr-namespace:SnakeGame" xmlns:sys="clr-namespace:System;assembly=netstandard"
         mc:Ignorable="d"
         ContentRendered="Window_RenderedContent" KeyUp="Window_KeyUp" 
         WindowState="Maximized" WindowStyle="None" SnapsToDevicePixels="True"
@@ -12,44 +12,48 @@
         <Style x:Key="Label" TargetType="Label">
             <Setter Property="FontSize" Value="20" />
         </Style>
+        <Style x:Key="Pause" TargetType="Button">
+            <Setter Property="FontSize" Value="24" />
+            <Setter Property="Height" Value="64" />
+            <Setter Property="Width" Value="220" />
+            <Setter Property="Margin" Value="0,5,0,5" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="BorderThickness" Value="0" />
+        </Style>
     </Window.Resources>
-    <Grid>
+    <Grid Name="ParentGrid" Height="auto" Width="auto">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="auto"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="120"/>
-            <RowDefinition Height="*" />
+            <RowDefinition Height="auto" />
         </Grid.RowDefinitions>
-        <StackPanel Name="Layout" Grid.RowSpan="1" Grid.ColumnSpan="1" Height="120" Background="Red" Orientation="Vertical">
-            <Button
-                Margin="0,30,0,0"
-                Height="64" Width="320" 
-                Cursor="Hand" 
-                Background="LightGray" 
-                FontSize="32"
-                BorderThickness="0"
-                Click="Button_Click"
-                Content="Main menu"/>
-        </StackPanel>
-        <Canvas 
-            Grid.Row="2"
-            Grid.Column="0"
-            Name="GameArea" 
-            ClipToBounds="True" 
-            Height="510" Width="510"
-            Background="Green" 
-            VerticalAlignment="Stretch">
-        </Canvas>
         <StackPanel 
-            Grid.Row="3"
-            Background="Orange"
-            HorizontalAlignment="Left"
-            Width="200">
+            ClipToBounds="True"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Stretch"
+            Background="Red"
+            Panel.ZIndex="10"
+            Name="PauseScreen"
+            Visibility="Hidden">
+            <Button Style="{StaticResource Pause}" Click="Continue_Click" VerticalAlignment="Center">CONTINUE</Button>
+            <Button Style="{StaticResource Pause}" Click="Button_Click" VerticalAlignment="Center">MAIN MENU</Button>
+        </StackPanel>
+        <StackPanel Name="Layout" Grid.RowSpan="1" Grid.ColumnSpan="1" Height="120" HorizontalAlignment="Center" VerticalAlignment="Bottom">
             <Label Name="Difficulty_Label" Style="{StaticResource Label}" Content="Difficulty:" />
             <Label Name="Score_Label" Style="{StaticResource Label}" Content="Score: " />
             <Label Name="Speed_Label" Style="{StaticResource Label}" Content="Speed: " />
         </StackPanel>
+        <Canvas Name="GameArea" 
+            Grid.Row="2"
+            Grid.Column="1"
+            ClipToBounds="True" 
+            Height="510" Width="510"
+            Background="Green" 
+            Panel.ZIndex="5"
+            VerticalAlignment="Stretch">
+        </Canvas>
     </Grid>
 
 

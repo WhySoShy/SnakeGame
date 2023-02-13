@@ -18,7 +18,7 @@
         </Style>
     </Window.Resources>
     <Grid>
-        <StackPanel  HorizontalAlignment="Center" VerticalAlignment="Center">
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
             <Label HorizontalContentAlignment="Center" FontSize="32" >SNAKE</Label>
             <Button 
                 Style="{StaticResource Button}"
@@ -28,6 +28,7 @@
             <Button
                 Style="{StaticResource Button}"
                 ToolTip="Click to see the leaderboard"
+                Click="Leaderboard_Click"
                 Content="LEADERBOARD"
                 />
             <Button 

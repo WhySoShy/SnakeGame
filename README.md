@@ -20,5 +20,7 @@ You control a snake where your purpose is to eat apples, and grow bigger to get 
 [Github](https://github.com/WhySoShy/SnakeGame/commit)
 
 
-
-
+## Tags
+* [V0.1](https://github.com/WhySoShy/SnakeGame/releases/tag/V0.1)
+* [V0.2](https://github.com/WhySoShy/SnakeGame/releases/tag/V0.2)
+* [V1](https://github.com/WhySoShy/SnakeGame/releases/tag/V1)

@@ -2,7 +2,7 @@
 #### Made by 
 
 ## Latest release
-[Release](https://github.com/WhySoShy/SnakeGame/releases/tag/V1)
+[Pre-Release](https://github.com/WhySoShy/SnakeGame/releases/tag/V1.0)
 
 ## Intro
 You control a snake where your purpose is to eat apples, and grow bigger to get the biggest score.

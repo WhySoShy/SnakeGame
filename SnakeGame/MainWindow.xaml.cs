@@ -17,6 +17,7 @@ using System.Windows.Threading;
 using Microsoft.Extensions.DependencyInjection;
 using SnakeGame.Data;
 using SnakeGame.Models;
+using System.Speech.Synthesis;
 
 namespace SnakeGame
 {
@@ -44,6 +45,7 @@ namespace SnakeGame
         private DispatcherTimer timer = new DispatcherTimer();
         #endregion
         #region Basic properties
+        private SpeechSynthesizer speechSynthesizer = new SpeechSynthesizer();
         private Random rnd = new();
         private readonly IData _data;
         #endregion
@@ -241,6 +243,7 @@ namespace SnakeGame
         {
             snakeLength++;
             currentScore++;
+            speechSynthesizer.SpeakAsync("FOOOOOD");
             // Sætter hastigheden op
             int timerInterval = Math.Max(snakeSpeedThreshold, (int)timer.Interval.TotalMilliseconds - (currentScore * 2));
             timer.Interval = TimeSpan.FromMilliseconds(timerInterval);
@@ -328,6 +331,7 @@ namespace SnakeGame
             timer.IsEnabled = false;
             List<LeaderBoardItems> _ = _data.ReadFromJson();
             DeadScreen.Visibility = Visibility.Visible;
+            speechSynthesizer.SpeakAsync("BITCH");
             if (_.Count() >= 10)
             {
                 _.Add(new LeaderBoardItems() { Score = currentScore, Name = Username.Text });

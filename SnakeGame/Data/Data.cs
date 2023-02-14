@@ -11,7 +11,7 @@ namespace SnakeGame.Data
 {
     public class Datas : IData
     {
-        private readonly string path = @"C:\Users\emilk\OneDrive\Skrivebord\Skole\H2\Programmering\SnakeGame\Data\Data.json";
+        private readonly string path = @"../../../Data.json";
         public List<LeaderBoardItems> ReadFromJson()
             => JsonSerializer.Deserialize<List<LeaderBoardItems>>(File.ReadAllText(path));
 

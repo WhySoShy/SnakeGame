@@ -60,10 +60,22 @@
             VerticalAlignment="Stretch">
         </Canvas>
         <!--Overlay panels-->
+        <StackPanel Visibility="Visible" Grid.RowSpan="3" Panel.ZIndex="10" Name="StartTitle">
+            <Grid Height="{Binding ActualHeight, ElementName=StartupScreen}" Width="{Binding ActualWidth, ElementName=StartupScreen}" >
+                <Rectangle Fill="Red" Opacity="0.4"/>
+                <Label HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <TextBlock FontSize="20">
+                    Press
+                    <Label FontWeight="Bold" VerticalAlignment="Bottom">SPACE</Label>
+                    to start
+                    </TextBlock>
+                </Label>
+            </Grid>
+        </StackPanel>
         <StackPanel Grid.RowSpan="3" Panel.ZIndex="11" Name="StartupScreen">
-            <Grid Panel.ZIndex="11" Name="Difficulty" Height="{Binding ActualHeight, ElementName=StartupScreen}" Width="{Binding ActualWidth, ElementName=StartupScreen}">
-                <Rectangle Name="DifficultyBackground" Fill="Orange" Panel.ZIndex="8" />
-                <StackPanel Name="DifficultySelector" Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center" Panel.ZIndex="10">
+            <Grid Panel.ZIndex="11" Name="Difficulty" Visibility="Visible" Height="{Binding ActualHeight, ElementName=StartupScreen}" Width="{Binding ActualWidth, ElementName=StartupScreen}">
+                <Rectangle Fill="Orange" Panel.ZIndex="8" />
+                <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center" Panel.ZIndex="10">
                     <Label Width="320" VerticalAlignment="Center" FontSize="24" FontWeight="Bold">CHOOSE YOUR DIFFICULTY</Label>
                     <Button Style="{StaticResource DifficultyButton}" Click="Difficulty_Selector">EASY</Button>
                     <Button Style="{StaticResource DifficultyButton}" Click="Difficulty_Selector">MEDIUM</Button>

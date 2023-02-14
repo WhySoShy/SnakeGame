@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Text;
-using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -85,7 +83,7 @@ namespace SnakeGame
             switch(e.Key)
             {
                 case Key.Escape:
-                    if (gameDifficulty == null)
+                    if (gameDifficulty == null || gameState == GameState.Dead || StartTitle.IsVisible)
                         return;
 
                     if (gameState != GameState.Dead)
@@ -93,8 +91,11 @@ namespace SnakeGame
                     PauseScreen.Visibility = Visibility.Visible;
                     return;
                 case Key.Space:
-                    if (gameState != GameState.Dead && gameDifficulty != null)
+                    if (!PauseScreen.IsVisible && gameState != GameState.Dead && gameDifficulty != null)
+                    {
+                        StartTitle.Visibility = Visibility.Hidden;
                         gameState = GameState.Started;
+                    }
                     return;
             }
 
@@ -150,9 +151,7 @@ namespace SnakeGame
                     snakeStartSpeed = 250;
                     break;
             }
-            DifficultySelector.Visibility = Visibility.Hidden;
-            DifficultyBackground.Visibility = Visibility.Hidden;
-
+            StartupScreen.Visibility = Visibility.Hidden;
 
             DrawGame();
             StartNewGame();
@@ -230,7 +229,6 @@ namespace SnakeGame
                 return;
             }
 
-
             foreach (SnakePart part in snakeParts.Take(snakeParts.Count - 1))
                 if (head.point.X == part.point.X && head.point.Y == part.point.Y)
                 {
@@ -248,10 +246,7 @@ namespace SnakeGame
             timer.Interval = TimeSpan.FromMilliseconds(timerInterval);
             GameArea.Children.Remove(snakeFood);
             DrawSnakeFood();
-            UpdateGameStatus();
         }
-        private void UpdateGameStatus() => this.Title = $"Snake score: {currentScore}";
-        
         private void DrawSnake()
         {
             foreach (SnakePart part in snakeParts)

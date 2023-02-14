@@ -54,7 +54,12 @@ namespace SnakeGame
                     Content = $"{i + 1}. | {leaderboards[i].Name} | {leaderboards[i].Score}",
                     Style = (Style)FindResource("BoardHolders")
                 });
+        }
 
+        private void Button_Click_1(object sender, RoutedEventArgs e)
+        {
+
+            _data.WriteToJson(new List<LeaderBoardItems>());
         }
     }
 }

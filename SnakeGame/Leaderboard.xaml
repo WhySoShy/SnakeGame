@@ -13,17 +13,24 @@
             <Setter Property="FontFamily" Value="Comic sans" />
             <Setter Property="FontWeight" Value="UltraBlack" />
             <Setter Property="HorizontalAlignment" Value="Center" />
-            <!--Find nogle font families som passer-->
         </Style>
         <Style x:Key="BoardHolders" TargetType="Label">
             <Setter Property="FontSize" Value="18" />
+        </Style>
+        <Style x:Key="Buttons" TargetType="Button">
+            <Setter Property="Height" Value="32" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Margin" Value="0,5,0,0" />
+            <Setter Property="FontSize" Value="16" />
+            <Setter Property="Cursor" Value="Hand" />
         </Style>
     </Window.Resources>
     <Grid>
         <StackPanel Background="Orange"  VerticalAlignment="Center" HorizontalAlignment="Center" Name="LeaderboardPanel">
             <Label Style="{StaticResource Title}">LEADERBOARD</Label>
             <StackPanel Name="LeaderboardHolders"></StackPanel>
-            <Button Click="Button_Click" Height="32" BorderThickness="0">RETURN</Button>
+            <Button Click="Button_Click" Style="{StaticResource Buttons}">RETURN TO MENU</Button>
+            <Button Click="Button_Click_1"  Style="{StaticResource Buttons}">CLEAR LEADERBOARD</Button>
         </StackPanel>
     </Grid>
 </Window>

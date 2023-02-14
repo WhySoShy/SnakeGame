@@ -14,6 +14,8 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using SnakeGame.Data;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace SnakeGame
 {
@@ -22,10 +24,12 @@ namespace SnakeGame
     /// </summary>
     public partial class Leaderboard : Window
     {
+        private readonly IData _data;
         public Leaderboard()
         {
             InitializeComponent();
-            ReadFromJson();
+            _data = new ServiceCollection().AddSingleton<IData, Datas>().BuildServiceProvider().GetRequiredService<IData>();
+            LoadLeaderboard();
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -35,25 +39,22 @@ namespace SnakeGame
             this.Close();
         }
 
-        private void ReadFromJson()
+        private void LoadLeaderboard()
         {
-            string path = @"C:\Users\emilk\source\repos\SnakeGame\Data\Data.json";
-            var JsonString = File.ReadAllText(path); 
-            List<LeaderboardList> leaderboards = JsonSerializer.Deserialize<List<LeaderboardList>>(JsonString);
+            List<LeaderBoardItems> leaderboards = _data.ReadFromJson();
 
             if (leaderboards.Count() <= 0)
             {
                 LeaderboardHolders.Children.Add(new Label() { Content = "There was not found any records.", Style = (Style)FindResource("BoardHolders") });
                 return;
             }
-            for(int i = 0; i < leaderboards.Count(); i++)
+            for (int i = 0; i < leaderboards.Count(); i++)
                 LeaderboardHolders.Children.Add(new Label()
                 {
-                    Content = $"{i+1}. | {leaderboards[i].Name} | {leaderboards[i].Score}",
+                    Content = $"{i + 1}. | {leaderboards[i].Name} | {leaderboards[i].Score}",
                     Style = (Style)FindResource("BoardHolders")
                 });
 
-            //foreach (var item in leaderboards)
         }
     }
 }

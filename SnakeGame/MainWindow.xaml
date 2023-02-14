@@ -21,9 +21,21 @@
             <Setter Property="BorderThickness" Value="0" />
         </Style>
         <Style x:Key="InputFieldForName" TargetType="TextBox">
-            <Setter Property="Height" Value="20" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="Height" Value="32" />
             <Setter Property="Width" Value="256" />
             <Setter Property="FontSize" Value="16" />
+            <Setter Property="Width" Value="200" />
+            <Setter Property="Margin" Value="0,5"/>
+        </Style>
+        <Style x:Key="DifficultyButton" TargetType="Button">
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Height" Value="64" />
+            <Setter Property="Width" Value="200" />
+            <Setter Property="FontSize" Value="22" />
+            <Setter Property="Margin" Value="0,4"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="FontWeight" Value="DemiBold"/>
         </Style>
     </Window.Resources>
     <Grid Name="Parent">
@@ -35,23 +47,46 @@
             <RowDefinition Height="auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
+        <StackPanel Name="Layout" Grid.RowSpan="1" Grid.ColumnSpan="1" MinHeight="120" HorizontalAlignment="Center" VerticalAlignment="Bottom">
+            <Label Name="Score_Label" Style="{StaticResource Label}" Content="Score: " Margin="0,15,0,0"/>
+            <Label Name="Speed_Label" Style="{StaticResource Label}" Content="Speed: " />
+        </StackPanel>
+        <Canvas Name="GameArea" 
+            Grid.Row="2"
+            Grid.Column="1"
+            ClipToBounds="True" 
+            Height="510" Width="510"
+            Panel.ZIndex="5"
+            VerticalAlignment="Stretch">
+        </Canvas>
+        <!--Overlay panels-->
+        <StackPanel Grid.RowSpan="3" Panel.ZIndex="11" Name="StartupScreen">
+            <Grid Panel.ZIndex="11" Name="Difficulty" Height="{Binding ActualHeight, ElementName=StartupScreen}" Width="{Binding ActualWidth, ElementName=StartupScreen}">
+                <Rectangle Name="DifficultyBackground" Fill="Orange" Panel.ZIndex="8" />
+                <StackPanel Name="DifficultySelector" Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center" Panel.ZIndex="10">
+                    <Label Width="320" VerticalAlignment="Center" FontSize="24" FontWeight="Bold">CHOOSE YOUR DIFFICULTY</Label>
+                    <Button Style="{StaticResource DifficultyButton}" Click="Difficulty_Selector">EASY</Button>
+                    <Button Style="{StaticResource DifficultyButton}" Click="Difficulty_Selector">MEDIUM</Button>
+                    <Button Style="{StaticResource DifficultyButton}" Click="Difficulty_Selector">HARD</Button>
+                    <Button Style="{StaticResource DifficultyButton}" Height="32" Click="Button_Click">EXIT</Button>
+                    <Label FontSize="19" Width="200">Enter a username</Label>
+                    <TextBox Name="Username" Style="{StaticResource InputFieldForName}">Username</TextBox>
+                </StackPanel>
+            </Grid>
+        </StackPanel>
+        <!--Pause screen-->
         <StackPanel 
             Grid.RowSpan="3"  Panel.ZIndex="10" Name="PauseScreen" Visibility="Hidden">
             <Grid Height="{Binding ActualHeight, ElementName=PauseScreen}" 
                   Width="{Binding ActualWidth, ElementName=PauseScreen}">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-                <StackPanel Grid.Row="0" Grid.Column="0" 
+                <StackPanel 
                     VerticalAlignment="Center" HorizontalAlignment="Center">
                     <Button Style="{StaticResource Pause}" Click="Continue_Click">CONTINUE</Button>
                     <Button Style="{StaticResource Pause}" Click="Button_Click">MAIN MENU</Button>
                 </StackPanel>
             </Grid>
         </StackPanel>
+        <!--Death screen-->
         <StackPanel Grid.RowSpan="3" Panel.ZIndex="11" Orientation="Vertical" Name="DeadScreen" Visibility="Hidden">
             <Grid Background="Red" Opacity="0.98" Height="{Binding ActualHeight, ElementName=DeadScreen}" Width="{Binding ActualWidth, ElementName=DeadScreen}">
                 <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
@@ -60,20 +95,6 @@
                 </StackPanel>
             </Grid>
         </StackPanel>
-        <StackPanel Name="Layout" Grid.RowSpan="1" Grid.ColumnSpan="1" MinHeight="120" HorizontalAlignment="Center" VerticalAlignment="Bottom">
-            <Label Name="Score_Label" Style="{StaticResource Label}" Content="Score: " Margin="0,15,0,0"/>
-            <Label Name="Speed_Label" Style="{StaticResource Label}" Content="Speed: " />
-            <TextBox Name="Username" Style="{StaticResource InputFieldForName}">Username</TextBox>
-        </StackPanel>
-        <Canvas Name="GameArea" 
-            Grid.Row="2"
-            Grid.Column="1"
-            ClipToBounds="True" 
-            Height="510" Width="510"
-            Background="Green" 
-            Panel.ZIndex="5"
-            VerticalAlignment="Stretch">
-        </Canvas>
     </Grid>
 
 

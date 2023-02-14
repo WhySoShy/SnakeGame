@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SnakeGame.Models
 {
-    public class LeaderboardList
+    public class LeaderBoardItems
     {
         public int Score { get; set; }
         public string? Name { get; set; }

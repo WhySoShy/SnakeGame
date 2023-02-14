@@ -16,6 +16,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
+using Microsoft.Extensions.DependencyInjection;
+using SnakeGame.Data;
 using SnakeGame.Models;
 
 namespace SnakeGame
@@ -31,18 +33,21 @@ namespace SnakeGame
         const int snakeRadius = 2;
 
         const int snakeStartLength = 3;
-        const int snakeStartSpeed = 400;
+        int snakeStartSpeed = 400; //Default
         const int snakeSpeedThreshold = 100;
 
         private int snakeLength = 3;
         private int currentScore = 0;
         private GameState gameState = GameState.Paused;
+        private GameDifficulty? gameDifficulty;
         private enum GameState { Started, Paused, Dead }
+        private enum GameDifficulty { Easy, Medium, Hard }
 
         private DispatcherTimer timer = new DispatcherTimer();
         #endregion
         #region Basic properties
         private Random rnd = new();
+        private readonly IData _data;
         #endregion
         #region Apple
         private UIElement snakeFood = null;
@@ -60,9 +65,7 @@ namespace SnakeGame
         public MainWindow()
         {
             InitializeComponent();
-            timer.Tick += Timer;
-            for (int i = 0; i < 10; i++)
-                DrawSnakeFood();
+            _data = new ServiceCollection().AddSingleton<IData, Datas>().BuildServiceProvider().GetRequiredService<IData>();
         }
         private void Timer(Object sender, EventArgs e)
         {
@@ -70,12 +73,10 @@ namespace SnakeGame
                 MoveSnake();
 
             Score_Label.Content = $"Score: {currentScore}";
-            Speed_Label.Content = $"Speed: {Math.Max(snakeSpeedThreshold, (int)timer.Interval.TotalMilliseconds - (currentScore * 4))}";
+            Speed_Label.Content = $"Speed asd: {Math.Max(snakeSpeedThreshold, (int)timer.Interval.TotalMilliseconds - (currentScore * 2))}";
         }
-        private async void Window_RenderedContent(Object sender, EventArgs e)
+        private void Window_RenderedContent(Object sender, EventArgs e)
         {
-            DrawGame();
-            StartNewGame();
             PauseScreen.Height = ActualHeight;
             PauseScreen.Width = ActualWidth;
         }
@@ -84,14 +85,15 @@ namespace SnakeGame
             switch(e.Key)
             {
                 case Key.Escape:
+                    if (gameDifficulty == null)
+                        return;
 
-                    PauseScreen.Visibility = Visibility.Visible;
                     if (gameState != GameState.Dead)
-                        gameState = GameState.Paused; 
+                        gameState = GameState.Paused;   
+                    PauseScreen.Visibility = Visibility.Visible;
                     return;
                 case Key.Space:
-
-                    if (gameState != GameState.Dead)
+                    if (gameState != GameState.Dead && gameDifficulty != null)
                         gameState = GameState.Started;
                     return;
             }
@@ -121,38 +123,75 @@ namespace SnakeGame
             if (snakeDirection != _)
                 MoveSnake();   
         }
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            Menu menu = new();
+            menu.Show();
+            this.Close();
+        }
+        private void Continue_Click(object sender, RoutedEventArgs e)
+        {
+            gameState = GameState.Started;
+            PauseScreen.Visibility = Visibility.Hidden;
+        }
+        private void Difficulty_Selector(object sender, RoutedEventArgs e)
+        {
+            switch(((Button)sender).Content.ToString().ToLower())
+            {
+                case "easy":
+                    gameDifficulty = GameDifficulty.Easy;
+                    break;
+                case "medium":
+                    gameDifficulty = GameDifficulty.Medium;
+                     snakeStartSpeed = 350;
+                    break;
+                case "hard":
+                    gameDifficulty = GameDifficulty.Hard;
+                    snakeStartSpeed = 250;
+                    break;
+            }
+            DifficultySelector.Visibility = Visibility.Hidden;
+            DifficultyBackground.Visibility = Visibility.Hidden;
+
+
+            DrawGame();
+            StartNewGame();
+
+            timer.Interval = TimeSpan.FromMilliseconds(snakeStartSpeed);
+            timer.Tick += Timer;
+            timer.IsEnabled = true;
+
+            return;
+        }
+
+        #region SNAKE
         private void StartNewGame()
         {
             snakeLength = snakeStartLength;
             snakeDirection = SnakeDirection.Right;
             snakeParts.Add(new SnakePart() { point = new Point(snakeSquareSize * 5, snakeSquareSize * 5) });
-            timer.Interval = TimeSpan.FromMilliseconds(snakeStartSpeed);
 
             DrawSnake();
             DrawSnakeFood();
-
-            timer.IsEnabled = true;
-            
-
         }
         private void MoveSnake()
         {
             if (gameState == GameState.Paused)
                 return;
 
-            while(snakeParts.Count() >= snakeLength)
+            while (snakeParts.Count() >= snakeLength)
             {
                 GameArea.Children.Remove(snakeParts[0].Element);
                 snakeParts.RemoveAt(0);
             }
-            foreach(SnakePart part in snakeParts)
+            foreach (SnakePart part in snakeParts)
             {
                 (part.Element as Rectangle).Fill = snakeBodyBrush;
                 part.IsHead = false;
             }
             SnakePart head = snakeParts[snakeParts.Count - 1];
             double nextX = head.point.X, nextY = head.point.Y;
-            switch(snakeDirection)
+            switch (snakeDirection)
             {
                 case SnakeDirection.Left:
                     nextX -= snakeSquareSize;
@@ -177,7 +216,7 @@ namespace SnakeGame
         }
         private void DoCollisionCheck()
         {
-            SnakePart head = snakeParts[snakeParts.Count-1];
+            SnakePart head = snakeParts[snakeParts.Count - 1];
             if (head.point.X == Canvas.GetLeft(snakeFood) && head.point.Y == Canvas.GetTop(snakeFood))
             {
                 EatSnakeFood();
@@ -185,15 +224,20 @@ namespace SnakeGame
             }
 
             if (head.point.X < 0 || head.point.X >= GameArea.ActualWidth ||
-                head.point.Y < 0 || head.point.Y >= GameArea.ActualHeight)                
+                head.point.Y < 0 || head.point.Y >= GameArea.ActualHeight)
+            {
                 EndGame();
-            
+                return;
+            }
+
 
             foreach (SnakePart part in snakeParts.Take(snakeParts.Count - 1))
                 if (head.point.X == part.point.X && head.point.Y == part.point.Y)
-                
+                {
                     EndGame();
-                
+                    return;
+                }
+
         }
         private void EatSnakeFood()
         {
@@ -206,13 +250,11 @@ namespace SnakeGame
             DrawSnakeFood();
             UpdateGameStatus();
         }
-        private void UpdateGameStatus()
-        {
-            this.Title = $"Snake score: {currentScore}";
-        }
+        private void UpdateGameStatus() => this.Title = $"Snake score: {currentScore}";
+        
         private void DrawSnake()
         {
-            foreach(SnakePart part in snakeParts)
+            foreach (SnakePart part in snakeParts)
             {
                 if (part.Element == null)
                 {
@@ -234,7 +276,6 @@ namespace SnakeGame
         {
             int nextX = 0, nextY = 0, rowCounter = 0;
             bool isOdd = false;
-            Debug.WriteLine(GameArea.ActualHeight);
             while (nextY <= GameArea.ActualHeight)
             {
                 Rectangle rectangle = new Rectangle()
@@ -263,7 +304,7 @@ namespace SnakeGame
         private Point GetNextFoodPos()
         {
             int maxX = (int)(GameArea.ActualWidth / snakeSquareSize);
-            int maxY = ((int)GameArea.ActualHeight / snakeSquareSize);
+            int maxY = (int)(GameArea.ActualHeight / snakeSquareSize);
             int foodX = rnd.Next(0, maxX) * snakeSquareSize;
             int foodY = rnd.Next(0, maxY) * snakeSquareSize;
 
@@ -286,51 +327,34 @@ namespace SnakeGame
             Canvas.SetTop(snakeFood, foodPosition.Y);
             Canvas.SetLeft(snakeFood, foodPosition.X);
         }
-        private void EndGame()
+        private async void EndGame()
         {
-            string path = @"C:\Users\emilk\source\repos\SnakeGame\Data\Data.json";
             gameState = GameState.Dead;
             timer.IsEnabled = false;
-            List<LeaderboardList> list = ReadFromJson();
+            List<LeaderBoardItems> _ = _data.ReadFromJson();
             DeadScreen.Visibility = Visibility.Visible;
-            if (list.Count() >= 10)
+            if (_.Count() >= 10)
             {
-                List<LeaderboardList> _ = list;
-                _.Add(new LeaderboardList() { Score = currentScore, Name = Username.Text });
+                _.Add(new LeaderBoardItems() { Score = currentScore, Name = Username.Text });
 
-                _.Sort((x,y) => x.Score.CompareTo(y.Score));
+                _.Sort((x, y) => x.Score.CompareTo(y.Score));
                 _ = _.OrderByDescending(x => x.Score).ToList();
 
                 if (_.Count > 10)
                     _.RemoveAt(_.Count() - 1);
 
-                File.WriteAllText(path, JsonSerializer.Serialize(_));
+                await _data.WriteToJson(_);
                 return;
             }
 
-            if (list.Count() <= 0 || list.Count() <= 10)
+            if (_.Count() <= 10)
             {
-                list.Add(new LeaderboardList() { Name = Username.Text, Score = currentScore });
-                File.WriteAllText(path, JsonSerializer.Serialize(list.OrderByDescending(x => x.Score).ToList()));
+                _.Add(new LeaderBoardItems() { Name = Username.Text, Score = currentScore });
+                await _data.WriteToJson(_.OrderByDescending(x => x.Score).ToList());
                 return;
             }
 
         }
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            Menu menu = new();
-            menu.Show();
-            this.Close();
-        }
-        private void Continue_Click(object sender, RoutedEventArgs e)
-        {
-            gameState = GameState.Started;
-            PauseScreen.Visibility = Visibility.Hidden;
-        }
-        private List<LeaderboardList> ReadFromJson()
-            => JsonSerializer.Deserialize<List<LeaderboardList>>(File.ReadAllText(@"C:\Users\emilk\source\repos\SnakeGame\Data\Data.json"));
-
-          
-        
+        #endregion
     }
 }

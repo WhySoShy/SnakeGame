@@ -30,5 +30,5 @@ The 3 different gamemodes just controls your starting speed, there is 2 things t
 * [V0.1](https://github.com/WhySoShy/SnakeGame/releases/tag/V0.1)
 * [V0.2](https://github.com/WhySoShy/SnakeGame/releases/tag/V0.2)
 * [V1](https://github.com/WhySoShy/SnakeGame/releases/tag/V1)
-* [V1](https://github.com/WhySoShy/SnakeGame/releases/tag/V1.1)
-* [V1](https://github.com/WhySoShy/SnakeGame/releases/tag/V1.2)
+* [V1.1](https://github.com/WhySoShy/SnakeGame/releases/tag/V1.1)
+* [V1.2](https://github.com/WhySoShy/SnakeGame/releases/tag/V1.2)
